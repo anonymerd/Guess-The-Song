@@ -1,7 +1,8 @@
 import os
 import time
-import playsound
+from playsound import playsound
 import random
+from string import capwords
 import speech_recognition as sr
 from gtts import gTTS
 
@@ -11,7 +12,7 @@ def speak(text):
     fileName = "voice.mp3"
     tts.save(fileName)
     print(text)
-    playsound.playsound(fileName)
+    playsound(fileName)
     os.remove(fileName)
 
 
@@ -36,9 +37,9 @@ def getAudio() :
 
           return said
 
-def generateRandomPlaylist(genre):
+def generateRandomPlaylist(genre, noOfQuestions):
     availableSongs = os.listdir("Songs\\{}".format(genre))
-    randomPlaylist = [availableSongs[x] for x in random.sample(range(0, len(availableSongs)), 3)]
+    randomPlaylist = [availableSongs[x] for x in random.sample(range(0, len(availableSongs)), noOfQuestions)]
     return randomPlaylist
 
 
@@ -53,7 +54,7 @@ def play():
 
     genreList = os.listdir("Songs")
     for i in genreList:
-        print(i.capitalize(), end = " \t ")
+        print("{:5}".format(capwords(i)))
     print()
 
     text = "For example if you want to choose Hip Hop, just say 'Hip Hop'"
@@ -68,30 +69,46 @@ def play():
             text = "Sorry, This option is not available. Choose a valid option."
             speak(text)
 
+    validNoOfQues = (3, 5, 7)
+    text = "Now, tell me how many questions do you want to answer.\nYou can say 3, 5 or 7"
+    speak(text)
+
+    while True:
+        print("Choose Number of Questions")
+        noOfQuestions = int(getAudio())
+        if noOfQuestions in validNoOfQues:
+            break
+        else:
+            text = "Sorry, This option is not available. Choose a valid option."
+            speak(text)
+
+
     text = "Great! Now let me tell you about the scoring system. For each song played, you have to guess the name of the song correctly for 10 points, and if you get the name of the artist as well, you get a bonus 10."
     speak(text)
 
     # genre = "hip hop"
 
-    randomPlaylist = generateRandomPlaylist(genre)
+    randomPlaylist = generateRandomPlaylist(genre, noOfQuestions)
     playerScore = 0
 
     position = {
         '1' : "first",
         '2' : "second",
-        '3' : "last",
+        '3' : "third",
         '4' : "fourth",
         '5' : "fifth",
         '6' : "sixth",
-        '7' : "last"
+        '7' : "seventh"
     }
+
+    position[noOfQuestions] = "last"
     # print(randomPlaylist[0])
 
     for i in range(len(randomPlaylist)):
-        text = "Here is {} song.".format(position[str(i+1)])
+        text = "Here is the {} song.".format(position[str(i+1)])
         speak(text)
 
-        playsound.playsound("Songs\\{}\\{}".format(genre, randomPlaylist[i]))
+        playsound("Songs\\{}\\{}".format(genre, randomPlaylist[i]))
         songName = randomPlaylist[i].split("-")[0];
         artistName = randomPlaylist[i].split("-")[1].replace(".mp3", "").split(",");
 
@@ -115,7 +132,7 @@ def play():
             songResponse = response[0].lower()
             artistResponse = response[0].lower()
 
-        print(response)
+        text = ""
 
         if songResponse in songName and artistResponse in artistName:
             playerScore += 20
@@ -127,12 +144,11 @@ def play():
             playerScore += 10
             text = "Wonderful! You get the artist correct."
 
-        text += "The song is '" + songName.capitalize() + "' by '" + artistName[0].capitalize() + "'. Your current score is '" + str(playerScore) + "'"
+        text += "The song is '" + capwords(songName) + "' by '" + capwords(artistName[0]) + "'. Your current score is '" + str(playerScore) + "'"
         speak(text)
 
     text = "Thank you for playing."
     speak(text)
-
 
 # playsound.playsound("Songs\\hip hop\\.mp3")
 play()
