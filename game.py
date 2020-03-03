@@ -1,9 +1,8 @@
-import os
-import time
-from playsound import playsound
 import random
-from string import capwords
 import speech_recognition as sr
+import os
+from string import capwords
+from playsound import playsound
 from gtts import gTTS
 
 
@@ -30,7 +29,7 @@ def getAudio() :
           try:
               print("Sending sound to Google Servers...")
               said = r.recognize_google(audio)
-              print(said)
+              print("Your Response : " + said)
           except Exception as e:
               print("Sorry, didn't get that one. Let's go again")
               said = getAudio()
@@ -71,7 +70,7 @@ def play():
 
         genreList = os.listdir("Songs")
         for i in genreList:
-            print("{:5}".format(capwords(i)))
+            print("{}".format(capwords(i)), end="")
         print()
 
         text = "For example if you want to choose Hip Hop, just say 'Hip Hop'"
@@ -129,7 +128,7 @@ def play():
             songName = randomPlaylist[i].split("-")[0];
             artistName = randomPlaylist[i].split("-")[1].replace(".mp3", "").split(",");
 
-            print("Your Response : ")
+            # print("Your Response : ")
 
             # response = input("Enter response : ")
 
@@ -171,7 +170,8 @@ def play():
 
     elif lang == 'Hindi':
         lang = 'hi'
-
+        text = "Sorry, Hindi language is not functional yet.....\nPlease select English"
+        speak(text)
 
 # playsound.playsound("Songs\\hip hop\\.mp3")
 play()

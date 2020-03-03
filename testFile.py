@@ -70,6 +70,4 @@ def play():
         text += "The song is " + songName + " by " + artistName
         speak(text)
 
-
-
 play()
