@@ -1,52 +1,53 @@
-import random
-import speech_recognition as sr
 import os
-from string import capwords
+import time
 from playsound import playsound
-from gtts import gTTS
+import random
+from string import capwords
+import speech_recognition as sr
+import pyttsx3
 
 
 def speak(text):
-    tts = gTTS(text=text, lang = 'en')
-    fileName = "voice.mp3"
-    tts.save(fileName)
+    engine = pyttsx3.init()
     print(text)
-    playsound(fileName)
-    os.remove(fileName)
+    engine.say(text)
+    engine.runAndWait()
 
 
-def getAudio() :
-      r = sr.Recognizer()
+def getAudio():
+    r = sr.Recognizer()
 
-      with sr.Microphone() as source:
-          print("Adjusting sound for ambient noise...")
-          r.adjust_for_ambient_noise(source)
+    with sr.Microphone() as source:
+        print("Adjusting sound for ambient noise...")
+        r.adjust_for_ambient_noise(source)
 
-          print("Listening...")
-          audio = r.listen(source)
-          said = ""
+        print("Listening...")
+        audio = r.listen(source)
+        said = ""
 
-          try:
-              print("Sending sound to Google Servers...")
-              said = r.recognize_google(audio)
-              print("Your Response : " + said)
-          except Exception as e:
-              print("Sorry, didn't get that one. Let's go again")
-              said = getAudio()
+        try:
+            print("Sending sound to Google Servers...")
+            said = r.recognize_google(audio)
+            print(said)
+        except Exception as e:
+            print("Sorry, didn't get that one. Let's go again ", e)
+            said = getAudio()
 
-          return said
+        return said
+
 
 def generateRandomPlaylist(genre, noOfQuestions):
     availableSongs = os.listdir("Songs\\{}".format(genre))
-    randomPlaylist = [availableSongs[x] for x in random.sample(range(0, len(availableSongs)), noOfQuestions)]
+    randomPlaylist = [availableSongs[x] for x in random.sample(
+        range(0, len(availableSongs)), noOfQuestions)]
     return randomPlaylist
 
 
 def play():
     availableLang = ("English", "Hindi")
-    validNoOfQues = ('3', '5', '7')
+    validNoOfQues = (3, 5, 7)
 
-    text  = "Hi, This is Stan. Let's start by knowing your name."
+    text = "Hi, This is Stan. Let's start by knowing your name."
     speak(text)
     print("Tell us your name.")
     userName = getAudio()
@@ -70,7 +71,7 @@ def play():
 
         genreList = os.listdir("Songs")
         for i in genreList:
-            print("{}".format(capwords(i)), end="")
+            print("{:5}".format(capwords(i)))
         print()
 
         text = "For example if you want to choose Hip Hop, just say 'Hip Hop'"
@@ -90,31 +91,30 @@ def play():
 
         while True:
             print("Choose Number of Questions")
-            noOfQuestions = getAudio()
+            noOfQuestions = int(getAudio())
             if noOfQuestions in validNoOfQues:
                 break
             else:
                 text = "Sorry, This option is not available. Choose a valid option."
                 speak(text)
 
-
         text = "Great! Now let me tell you about the scoring system. For each song played, you have to guess the name of the song correctly for 10 points, and if you get the name of the artist as well, you get a bonus 10."
         speak(text)
 
         # genre = "hip hop"
 
-        randomPlaylist = generateRandomPlaylist(genre, int(noOfQuestions))
+        randomPlaylist = generateRandomPlaylist(genre, noOfQuestions)
         playerScore = 0
         quesScore = 0
 
         position = {
-            '1' : "first",
-            '2' : "second",
-            '3' : "third",
-            '4' : "fourth",
-            '5' : "fifth",
-            '6' : "sixth",
-            '7' : "seventh"
+            '1': "first",
+            '2': "second",
+            '3': "third",
+            '4': "fourth",
+            '5': "fifth",
+            '6': "sixth",
+            '7': "seventh"
         }
 
         position[noOfQuestions] = "last"
@@ -125,10 +125,11 @@ def play():
             speak(text)
 
             playsound("Songs\\{}\\{}".format(genre, randomPlaylist[i]))
-            songName = randomPlaylist[i].split("-")[0];
-            artistName = randomPlaylist[i].split("-")[1].replace(".mp3", "").split(",");
+            songName = randomPlaylist[i].split("-")[0]
+            artistName = randomPlaylist[i].split(
+                '-')[1].replace(".mp3", "").split(",")
 
-            # print("Your Response : ")
+            print("Your Response : ")
 
             # response = input("Enter response : ")
 
@@ -150,28 +151,27 @@ def play():
 
             if songResponse in songName and artistResponse in artistName:
                 quesScore = 20
-                text = "Wow! You get the song as well as the artist correct."
+                text = "Wow! You get the song as well as the artist correct. "
             elif songResponse in songName:
                 quesScore = 10
-                text = "Great! You get the song correct."
+                text = "Great! You get the song correct. "
             elif artistResponse in artistName:
                 quesScore = 10
-                text = "Wonderful! You get the artist correct."
+                text = "Wonderful! You get the artist correct. "
             else:
                 text = "Sorry!"
 
             playerScore += quesScore
-            text += "The song is '" + capwords(songName) + "' by '" + capwords(artistName[0]) + "'. You scored " + str(quesScore) + " points on this question. Your current score is '" + str(playerScore) + "'"
+            text += "The song is '" + capwords(songName) + "' by '" + capwords(artistName[0]) + "'. You scored " + str(
+                quesScore) + " points on this question. Your current score is '" + str(playerScore) + "'"
             speak(text)
 
         text = "Thank you for playing."
         speak(text)
 
-
     elif lang == 'Hindi':
         lang = 'hi'
-        text = "Sorry, Hindi language is not functional yet.....\nPlease select English"
-        speak(text)
+
 
 # playsound.playsound("Songs\\hip hop\\.mp3")
 play()
