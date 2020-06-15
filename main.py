@@ -3,6 +3,9 @@ from player import Player
 
 
 def play():
+    '''
+    Here, the actual game starts.
+    '''
 
     newGame = Game()
     text = "Hi, This is Stan. Let's start by knowing your name."

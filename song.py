@@ -1,4 +1,9 @@
 class Song():
+
+    '''
+    This is Song Class which is used to represent each song played/used in the game.
+    '''
+
     def __init__(self, name, artist):
         self.name = name
         self.artist = artist

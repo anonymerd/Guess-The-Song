@@ -1,5 +1,9 @@
 class Player():
 
+    '''
+    This is Player Class which represents the user which is playing the game.
+    '''
+
     def __init__(self, name, lang, genre, noOfQues):
         self.name = name
         self.lang = lang

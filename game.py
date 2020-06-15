@@ -11,12 +11,20 @@ from song import Song
 
 class Game():
 
+    '''
+    This is game class. Each game that is played is represented by this class.
+    '''
+
     availableLang = ("English", "Hindi")
     availableNoOfQ = (3, 4, 5)
     availableGenres = tuple(os.listdir("Songs"))
 
     @staticmethod
     def speak(text):
+        '''
+        This function converts the text into speech(voice) using pyttsx3 module
+        '''
+
         engine = pyttsx3.init()
         print(text)
         engine.say(text)
@@ -24,6 +32,10 @@ class Game():
 
     @staticmethod
     def getAudio():
+        '''
+        This function gets speech (voice) input from the user and converts it into text using Google's Speech Recognition module.
+        '''
+
         r = sr.Recognizer()
         said = ""
 
@@ -48,6 +60,10 @@ class Game():
         pass
 
     def getLang(self):
+        '''
+        Getting lang from the user
+        '''
+
         while True:
             text = "These are the list of LANGUAGES you can choose from"
             Game.speak(text)
@@ -67,6 +83,10 @@ class Game():
         return self.lang
 
     def getGenre(self):
+        '''
+        Getting Genre from the user
+        '''
+
         while True:
             text = "These are the list of GENRES you can choose from"
             Game.speak(text)
@@ -89,6 +109,10 @@ class Game():
         return self.genre
 
     def getNoOfQues(self):
+        '''
+        Getting number of questions from the user
+        '''
+
         text = "Now, tell me how many questions do you want to answer.\nYou can say 3, 4 or 5"
         Game.speak(text)
 
@@ -105,6 +129,10 @@ class Game():
         return self.noOfQuestions
 
     def generateRandomPlaylist(self):
+        '''
+        Generating random playlist of the songs for the user
+        '''
+
         self.availableSongs = os.listdir(
             f"Songs\\{self.genre}\\{self.lang}\\")
         randNos = random.sample(
@@ -113,6 +141,9 @@ class Game():
             self.availableSongs[x].replace(".mp3", "") for x in randNos]
 
     def start(self, player):
+        '''
+        Main function that starts the game
+        '''
 
         QPosition = {
             '1': "first",
@@ -152,6 +183,10 @@ class Game():
             Game.speak(text)
 
     def chkAns(self, song, response):
+        '''
+        This function whether user has given the correct answer and award points accordingly.
+        '''
+
         songResponse = ""
         artistResponse = ""
 
